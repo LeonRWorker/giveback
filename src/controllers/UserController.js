@@ -157,14 +157,29 @@ module.exports = {
       }
     }
     const user = await getUser(id)
-    if (user) {
-      if (!user.isActive) {
-        return response.status(404).json('O usuário informado foi desativado! Você não pode alterar informações desse usuário.')
-      }
-      return response.status(200).json(user)
-    } else {
+    if (user && !user.isActive) {
+      return response.status(404).json('O usuário informado foi desativado! Você não pode alterar informações desse usuário.')
+    }
+    if (!user) {
       return response.status(404).json({
         error: 'O usuário informado não foi encontrado.'
+      })
+    }
+    // Verificar se todos os campos necessários foram fornecidos
+    const requiredFields = ['name', 'password', 'email']
+    const missingFields = requiredFields.filter(field => !(field in request.body))
+    if (missingFields.length > 0) {
+      return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
+    }
+    // Alterar as novas informações
+    const { name, password, email } = request.body
+    const hashedPassword = bcrypt.hashSync(password, 10)
+    try {
+      await updateUser(id, name, email, hashedPassword)
+      return response.status(200)
+    } catch {
+      return response.status(500).json({
+        error: 'Não foi possível atualizar o usuário informado'
       })
     }
   },
@@ -204,13 +219,8 @@ module.exports = {
     }
     // Tentar desativar ou retornar erro
     try {
-      const userDisabled = await disableUser(id)
-      if (!userDisabled) {
-        return response.status(200)
-      }
-      return response.status(500).json({
-        error: 'Não foi possível desativar o usuário informado'
-      })
+      await disableUser(id)
+      return response.status(200)
     } catch {
       return response.status(500).json({
         error: 'Erro de servidor interno'
@@ -235,5 +245,5 @@ async function updateUser (userId, name, login, hashedPassword) {
   return (await connection`UPDATE users SET name = ${name}, login = ${login}, password = ${hashedPassword} WHERE id = ${userId}`)
 }
 async function disableUser (userId) {
-  return (await connection`UPDATE users SET isActive = false WHERE id = ${userId} RETURING isActive`)
+  return (await connection`UPDATE users SET isActive = false WHERE id = ${userId}`)
 }
