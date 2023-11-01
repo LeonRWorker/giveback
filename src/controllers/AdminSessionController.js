@@ -12,7 +12,7 @@ module.exports = {
         })
       }
       const { email, password } = request.body
-      const admin = await getAdminByemail(email)
+      const admin = await getAdminByEmail(email)
       if (!admin) {
         return response.status(401).json({
           error: 'O usuário informado não existe!'
@@ -33,6 +33,6 @@ module.exports = {
   }
 }
 
-async function getAdminByemail (email) {
+async function getAdminByEmail (email) {
   return (await connection`SELECT * FROM admin WHERE email = ${email}`).find(admin => admin.email === email)
 }
