@@ -161,6 +161,20 @@ module.exports = {
       })
     }
   },
+  async updateLateLoans() {
+    // Pegar data atual
+    const currentDate = new Date()
+    // Buscar todos os empréstimos
+    const loans = await getAllLoans()
+    // Percorrer os empréstimos
+    for (const loan of loans) {
+      // Verificar se a data atual ultrapassou a data estipulada, onde o status seja diferente de atrasado e diferente de finalizado
+      if (loan.finaldate.getTime() < currentDate.getTime() && loan.status !== 'atrasado' && loan.status  !== 'finalizado') {
+        // Atualize o status para 'atrasado'
+        await updateLoanStatus(loan.id, 'atrasado')
+      }
+    }
+  }
 }
 
 async function getUser (userId) {
@@ -183,19 +197,4 @@ async function updateLoanDetails (loanId, loanedto, name, category, observations
 }
 async function updateLoanStatus (loanId, status) {
   return (await connection`UPDATE loans SET status = ${status} WHERE id = ${loanId}`)
-}
-
-export async function updateLateLoans() {
-  // Pegar data atual
-  const currentDate = new Date()
-  // Buscar todos os empréstimos
-  const loans = await getAllLoans()
-  // Percorrer os empréstimos
-  for (const loan of loans) {
-    // Verificar se a data atual ultrapassou a data estipulada, onde o status seja diferente de atrasado e diferente de finalizado
-    if (loan.finaldate.getTime() < currentDate.getTime() && loan.status !== 'atrasado' && loan.status  !== 'finalizado') {
-      // Atualize o status para 'atrasado'
-      await updateLoanStatus(loan.id, 'atrasado')
-    }
-  }
 }

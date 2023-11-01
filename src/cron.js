@@ -1,9 +1,9 @@
-const LoanController = require('./controllers/LoanController')
+const LoansController = require('./controllers/LoansController')
 const cron = require('node-cron')
 
 cron.schedule('0 12 * * *', async () => {
   try {
-    await LoanController.updateLateLoans()
+    await LoansController.updateLateLoans()
   } catch (error) {
     console.log(`Erro: ${error}`)
   }
