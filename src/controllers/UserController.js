@@ -21,13 +21,13 @@ module.exports = {
       })
     }
     // Verificar se os campos foram preenchidos
-    const requiredFields = ['name', 'login', 'password']
+    const requiredFields = ['name', 'email', 'password']
     const missingFields = requiredFields.filter(field => !(field in request.body))
     if (missingFields.length > 0) {
       return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
     }
     // Dados do corpo da requisição
-    const { name, login, password } = request.body
+    const { name, email, password } = request.body
     // Gerar id do usuário
     const id = crypto.randomBytes(4).toString('hex')
     // Criptografar senha
@@ -35,7 +35,7 @@ module.exports = {
     // Tentar cadastrar usuário no banco de dados 
     try {
       // Cadastrar usuário
-      await creatUser(id, name, login, hashedPassword)
+      await creatUser(id, name, email, hashedPassword)
       // Verificar se o usuário foi cadastrado
       const user = await getUser(id)
       // Retornar usuário ou erro
@@ -232,8 +232,8 @@ module.exports = {
 async function getAdmin (adminId) {
   return (await connection`SELECT * FROM admin WHERE id = ${adminId}`).find(admin => admin.id === adminId)
 }
-async function creatUser (userId, name, login, hashedPassword) {
-  return (await connection`INSERT INTO users (id, registration, password) VALUES (${userId}, ${name}, ${login}, ${hashedPassword})`)
+async function creatUser (userId, name, email, hashedPassword) {
+  return (await connection`INSERT INTO users (id, name, email, password) VALUES (${userId}, ${name}, ${email}, ${hashedPassword})`)
 }
 async function getAllUsers () {
   return (await connection`SELECT * FROM users`)
@@ -241,8 +241,8 @@ async function getAllUsers () {
 async function getUser (userId) {
   return (await connection`SELECT * FROM users WHERE id = ${userId}`).find(user => user.id === userId)
 }
-async function updateUser (userId, name, login, hashedPassword) {
-  return (await connection`UPDATE users SET name = ${name}, login = ${login}, password = ${hashedPassword} WHERE id = ${userId}`)
+async function updateUser (userId, name, email, hashedPassword) {
+  return (await connection`UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword} WHERE id = ${userId}`)
 }
 async function disableUser (userId) {
   return (await connection`UPDATE users SET isActive = false WHERE id = ${userId}`)
