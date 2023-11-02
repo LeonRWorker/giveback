@@ -20,38 +20,38 @@ module.exports = {
         error: 'Operação não permitida! Você precisa precisa ser um administrador para cadastrar um usuário.'
       })
     }
-    // Verificar se os campos foram preenchidos
-    const requiredFields = ['name', 'email', 'password']
-    const missingFields = requiredFields.filter(field => !(field in request.body))
-    if (missingFields.length > 0) {
-      return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
-    }
-    // Dados do corpo da requisição
-    const { name, email, password } = request.body
-    // Gerar id do usuário
-    const id = crypto.randomBytes(4).toString('hex')
-    // Criptografar senha
-    const hashedPassword = bcrypt.hashSync(password, 10)
-    // Tentar cadastrar usuário no banco de dados 
-    try {
-      // Cadastrar usuário
-      await creatUser(id, name, email, hashedPassword)
-      // Verificar se o usuário foi cadastrado
-      const user = await getUser(id)
-      // Retornar usuário ou erro
-      if (user) {
-        return response.status(201).json(user)
-      } else {
-        return response.status(500).json({
-          error: 'Não foi possível cadastrar o usuário.'
-        })
-      }
-    } catch (error) {
-      return response.status(500).json({
-        message: 'Erro de servidor interno',
-        error: error.message
-      })
-    }
+    // // Verificar se os campos foram preenchidos
+    // const requiredFields = ['name', 'email', 'password']
+    // const missingFields = requiredFields.filter(field => !(field in request.body))
+    // if (missingFields.length > 0) {
+    //   return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
+    // }
+    // // Dados do corpo da requisição
+    // const { name, email, password } = request.body
+    // // Gerar id do usuário
+    // const id = crypto.randomBytes(4).toString('hex')
+    // // Criptografar senha
+    // const hashedPassword = bcrypt.hashSync(password, 10)
+    // // Tentar cadastrar usuário no banco de dados 
+    // try {
+    //   // Cadastrar usuário
+    //   await creatUser(id, name, email, hashedPassword)
+    //   // Verificar se o usuário foi cadastrado
+    //   const user = await getUser(id)
+    //   // Retornar usuário ou erro
+    //   if (user) {
+    //     return response.status(201).json(user)
+    //   } else {
+    //     return response.status(500).json({
+    //       error: 'Não foi possível cadastrar o usuário.'
+    //     })
+    //   }
+    // } catch (error) {
+    //   return response.status(500).json({
+    //     message: 'Erro de servidor interno',
+    //     error: error.message
+    //   })
+    // }
   },
   async index (request, response) {
     // Verificar se tem sessão
