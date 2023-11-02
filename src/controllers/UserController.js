@@ -28,6 +28,13 @@ module.exports = {
     }
     // Dados do corpo da requisição
     const { name, email, password } = request.body
+    // Verificar se o administrador existe
+    const user = await getUserByEmail(email)
+    if (user) {
+      return response.status(401).json({
+        error: 'O administrador informado já existe!'
+      })
+    }
     // Gerar id do usuário
     const id = crypto.randomBytes(4).toString('hex')
     // Criptografar senha
@@ -232,6 +239,9 @@ module.exports = {
   },
 }
 
+async function getUserByEmail (email) {
+  return (await connection`SELECT * FROM users WHERE email = ${email}`).find(user => user.email === email)
+}
 async function getAdmin (adminId) {
   return (await connection`SELECT * FROM admin WHERE id = ${adminId}`).find(admin => admin.id === adminId)
 }
