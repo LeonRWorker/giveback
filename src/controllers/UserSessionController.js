@@ -13,9 +13,9 @@ module.exports = {
       }
       const { email, password } = request.body
       const user = await getUserByEmail(email)
-      if (user) {
+      if (!user) {
         return response.status(401).json({
-          error: 'O usuário informado já existe!'
+          error: 'O usuário informado não existe!'
         })
       }
       const isPasswordValid = await bcrypt.compare(password, user.password)

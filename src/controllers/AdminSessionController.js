@@ -13,9 +13,9 @@ module.exports = {
       }
       const { email, password } = request.body
       const admin = await getAdminByEmail(email)
-      if (admin) {
+      if (!admin) {
         return response.status(401).json({
-          error: 'O usuário informado já existe!'
+          error: 'O usuário informado não existe!'
         })
       }
       const isPasswordValid = await bcrypt.compare(password, admin.password)
