@@ -20,6 +20,7 @@ module.exports = {
         error: 'Operação não permitida! Você precisa precisa ser um administrador para cadastrar um usuário.'
       })
     }
+    return response.json(adminExist)
     // // Verificar se os campos foram preenchidos
     // const requiredFields = ['name', 'email', 'password']
     // const missingFields = requiredFields.filter(field => !(field in request.body))
