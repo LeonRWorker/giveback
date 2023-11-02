@@ -248,5 +248,5 @@ async function updateUser (userId, name, email, hashedPassword) {
   return (await connection`UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword} WHERE id = ${userId}`)
 }
 async function disableUser (userId) {
-  return (await connection`UPDATE users SET isactive = false WHERE id = ${userId}`)
+  return (await connection`UPDATE users SET isactive = f WHERE id = ${userId}`)
 }
