@@ -7,10 +7,7 @@ require('./src/cron')
 
 const PORT = process.env.port || 5173
 
-app.use(cors({
-  origin: '*',
-  methods: ['PUT', 'POST', 'DELETE', 'GET', 'OPTIONS']
-}))
+app.use(cors())
 app.use(express.json())
 app.use('/', routes)
 
