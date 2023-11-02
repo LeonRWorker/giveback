@@ -87,7 +87,7 @@ module.exports = {
       })
     }
     // Verificar se tem o id do empréstimo que deseja realizar a operação
-    const { id } = request.params.id
+    const { id } = request.params
     if (!id) {
       return response.status(400).json({
         error: 'Você não especificou o empréstimo que deseja listar as informações.'
@@ -124,7 +124,7 @@ module.exports = {
       })
     }
     // Verificar se tem o id do empréstimo que deseja realizar a operação
-    const { id } = request.params.id
+    const { id } = request.params
     if (!id) {
       return response.status(400).json({
         error: 'Você não especificou o empréstimo que deseja alterar as informações.'

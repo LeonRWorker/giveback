@@ -96,7 +96,7 @@ module.exports = {
       }
     }
     // Verificar se tem o id do usuário que deseja realizar a operação
-    const { id } = request.params.id
+    const { id } = request.params
     if (!id) {
       return response.status(400).json({
         error: 'Você não especificou o usuário que deseja listar as informações.'
@@ -113,7 +113,7 @@ module.exports = {
     }
     const user = await getUser(id)
     if (user) {
-      if (!user.isActive) {
+      if (!user.isactive) {
         return response.status(404).json('O usuário informado foi desativado! Você não pode listar informações desse usuário.')
       }
       return response.status(200).json(user)
@@ -142,7 +142,7 @@ module.exports = {
       }
     }
     // Verificar se tem o id do usuário que deseja realizar a operação
-    const { id } = request.params.id
+    const { id } = request.params
     if (!id) {
       return response.status(400).json({
         error: 'Você não especificou o usuário que deseja listar as informações.'
@@ -158,7 +158,7 @@ module.exports = {
       }
     }
     const user = await getUser(id)
-    if (user && !user.isActive) {
+    if (user && !user.isactive) {
       return response.status(404).json('O usuário informado foi desativado! Você não pode alterar informações desse usuário.')
     }
     if (!user) {
@@ -204,7 +204,7 @@ module.exports = {
       }
     }
     // Verificar se tem o id do usuário que deseja realizar a operação
-    const { id } = request.params.id
+    const { id } = request.params
     if (!id) {
       return response.status(400).json({
         error: 'Você não especificou o usuário que deseja remover.'
@@ -248,5 +248,5 @@ async function updateUser (userId, name, email, hashedPassword) {
   return (await connection`UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword} WHERE id = ${userId}`)
 }
 async function disableUser (userId) {
-  return (await connection`UPDATE users SET isActive = false WHERE id = ${userId}`)
+  return (await connection`UPDATE users SET isactive = false WHERE id = ${userId}`)
 }
