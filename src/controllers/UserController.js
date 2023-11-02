@@ -14,8 +14,8 @@ module.exports = {
       })
     }
     // Verificar se é um administrador
-    const admiExist = await getAdmin(session_id)
-    if (!admiExist && session_id !== adminSecret) {
+    const adminExist = await getAdmin(session_id)
+    if (!adminExist && session_id !== adminSecret) {
       return response.status(401).json({
         error: 'Operação não permitida! Você precisa precisa ser um administrador para cadastrar um usuário.'
       })
@@ -46,9 +46,10 @@ module.exports = {
           error: 'Não foi possível cadastrar o usuário.'
         })
       }
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Erro de servidor interno'
+        message: 'Erro de servidor interno',
+        error: error.message
       })
     }
   },
@@ -61,8 +62,8 @@ module.exports = {
       })
     }
     // Verificar se é um administrador
-    const admiExist = await getAdmin(session_id)
-    if (!admiExist && session_id !== adminSecret) {
+    const adminExist = await getAdmin(session_id)
+    if (!adminExist && session_id !== adminSecret) {
       return response.status(401).json({
         error: 'Operação não permitida! Você precisa precisa ser um administrador para listar todos os usuários.'
       })
@@ -87,8 +88,8 @@ module.exports = {
     // Verificar se tem permissão
     const userExist = await getUser(session_id)
     if (!userExist) {
-      const admiExist = await getAdmin(session_id)
-      if (!admiExist && session_id !== adminSecret) {
+      const adminExist = await getAdmin(session_id)
+      if (!adminExist && session_id !== adminSecret) {
         return response.status(401).json({
           error: 'Operação não permitida! Você precisa precisa ser um administrador para listar as informações do usuário informado.'
         })
@@ -133,8 +134,8 @@ module.exports = {
     // Verificar se é um administrador
     const userExist = await getUser(session_id)
     if (!userExist) {
-      const admiExist = await getAdmin(session_id)
-      if (!admiExist && session_id !== adminSecret) {
+      const adminExist = await getAdmin(session_id)
+      if (!adminExist && session_id !== adminSecret) {
         return response.status(401).json({
           error: 'Operação não permitida! Você precisa precisa das permissões necessárias para atualizar as informações do usuário informado.'
         })
@@ -177,9 +178,10 @@ module.exports = {
     try {
       await updateUser(id, name, email, hashedPassword)
       return response.status(200)
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Não foi possível atualizar o usuário informado'
+        message: 'Não foi possível atualizar o usuário informado.',
+        error: error.message
       })
     }
   },
@@ -194,8 +196,8 @@ module.exports = {
     // Verificar se é um administrador
     const userExist = await getUser(session_id)
     if (!userExist && session_id !== adminSecret) {
-      const admiExist = await getAdmin(session_id)
-      if (!admiExist) {
+      const adminExist = await getAdmin(session_id)
+      if (!adminExist) {
         return response.status(401).json({
           error: 'Operação não permitida! Você precisa precisa das permissões necessárias para remover o usuário informado.'
         })
@@ -221,9 +223,10 @@ module.exports = {
     try {
       await disableUser(id)
       return response.status(200)
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Erro de servidor interno'
+        message: 'Erro de servidor interno',
+        error: error.message
       })
     }
   },
