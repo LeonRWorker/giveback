@@ -221,7 +221,7 @@ module.exports = {
     }
     // Tentar desativar ou retornar erro
     try {
-      await disableUser(id, f)
+      await disableUser(id, false)
       return response.status(200)
     } catch (error) {
       return response.status(500).json({
