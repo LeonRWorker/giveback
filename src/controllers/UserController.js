@@ -221,7 +221,7 @@ module.exports = {
     }
     // Tentar desativar ou retornar erro
     try {
-      await disableUser(id)
+      await disableUser(id, false)
       return response.status(200)
     } catch (error) {
       return response.status(500).json({
@@ -247,6 +247,6 @@ async function getUser (userId) {
 async function updateUser (userId, name, email, hashedPassword) {
   return (await connection`UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword} WHERE id = ${userId}`)
 }
-async function disableUser (userId) {
-  return (await connection`UPDATE users SET isactive = f WHERE id = ${userId}`)
+async function disableUser (userId, isactive) {
+  return (await connection`UPDATE users SET isactive = ${isactive} WHERE id = ${userId}`)
 }
