@@ -12,19 +12,19 @@ module.exports = {
         })
       }
       const { email, password } = request.body
-      const admin = await getUserByEmail(email)
-      if (!admin) {
+      const user = await getUserByEmail(email)
+      if (!user) {
         return response.status(401).json({
           error: 'O usuário informado não existe!'
         })
       }
-      const isPasswordValid = await bcrypt.compare(password, admin.password)
+      const isPasswordValid = await bcrypt.compare(password, user.password)
       if (!isPasswordValid) {
         return response.status(401).json({
           error: 'Cradenciais de acesso inválidas!'
         })
       }
-      return response.status(200).json(admin)
+      return response.status(200).json(user)
     } catch {
       return response.status(404).json({
         error: 'Não foi possível realizar o email.'
