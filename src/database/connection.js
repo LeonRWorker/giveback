@@ -1,4 +1,6 @@
 const postgres = require('postgres')
+const dotenv = require('dotenv')
+dotenv.config()
 
 const connection = postgres({
   user: process.env.DB_USER,

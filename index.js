@@ -5,7 +5,7 @@ const app = express()
 require('dotenv').config()
 require('./src/cron')
 
-const PORT = process.env.port || 5173
+const PORT = process.env.PORT || 5173
 
 app.use(cors())
 app.use(express.json())
