@@ -30,7 +30,7 @@ module.exports = {
     // Tentar registrar o empréstimo ou retornar erro 
     try {
       // Registrar empréstimo
-      await registerLoan(id, borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate, 'pendente')
+      await registerLoan(id, borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate, 'inday')
       // Verificar se o usuário foi cadastrado
       const itemLoan = await getLoanById(id)
       // Retornar usuário ou erro
@@ -169,9 +169,9 @@ module.exports = {
     // Percorrer os empréstimos
     for (const loan of loans) {
       // Verificar se a data atual ultrapassou a data estipulada, onde o status seja diferente de atrasado e diferente de finalizado
-      if (loan.finaldate.getTime() < currentDate.getTime() && loan.status !== 'atrasado' && loan.status  !== 'finalizado') {
+      if (loan.finaldate.getTime() < currentDate.getTime() && loan.status !== 'late' && loan.status  !== 'inday') {
         // Atualize o status para 'atrasado'
-        await updateLoanStatus(loan.id, 'atrasado')
+        await updateLoanStatus(loan.id, 'late')
       }
     }
   }
