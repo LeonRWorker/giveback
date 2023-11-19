@@ -209,7 +209,9 @@ module.exports = {
     // Alterar as informações ou retornar erro
     try {
       await updateLoanStatus(id, status)
-      return response.status(200)
+      return response.status(200).json({
+        message: 'Status do empréstimo atualizado com sucesso!'
+      })
     } catch (error) {
       return response.status(500).json({
         error: 'Não foi possível atualizar o status do empréstimo informado.',
