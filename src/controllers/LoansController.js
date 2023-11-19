@@ -161,7 +161,7 @@ module.exports = {
       })
     }
   },
-  async updateStatus() {
+  async updateStatus(request, response) {
     // Verificar se tem sessão
     const session_id = request.headers.session_id
     if (!session_id) {
