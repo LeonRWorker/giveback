@@ -161,6 +161,59 @@ module.exports = {
       })
     }
   },
+  async updateStatus() {
+    // Verificar se tem sessão
+    const session_id = request.headers.session_id
+    if (!session_id) {
+      return response.status(401).json({
+        error: 'Operação não permitida! Você precisa estar autenticado para realizar essa operação.'
+      })
+    }
+    // Verificar se tem permissão
+    const userExist = await getUser(session_id)
+    if (!userExist) {
+      return response.status(401).json({
+        error: 'Operação não permitida! Você precisa precisa ser um usuário para alterar as informações do empréstimo informado.'
+      })
+    }
+    // Verificar se tem o id do empréstimo que deseja realizar a operação
+    const { id } = request.params
+    if (!id) {
+      return response.status(400).json({
+        error: 'Você não especificou o empréstimo que deseja alterar as informações.'
+      })
+    }
+    // Verificar se o empréstimo informado existe
+    const loanExist = await getLoanById(id)
+    if (!loanExist) {
+      return response.status(404).json({
+        error: 'O empréstimo informado não existe.'
+      })
+    }
+    // Verificar se o usuário que realizou o impréstimo é o mesmo logado
+    if (loanExist.borrowedby !== session_id) {
+      return response.status(401).json({
+        error: 'Você não está autorizado a alterar as informações de empréstimo de outros usuários.'
+      })
+    }
+    // Verificar se os campos foram preenchidos
+    const requiredFields = ['status']
+    const missingFields = requiredFields.filter(field => !(field in request.body))
+    if (missingFields.length > 0) {
+      return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
+    }
+    // Dados do corpo da requisição
+    const { status } = request.body
+    // Alterar as informações ou retornar erro
+    try {
+      await updateLoanStatus(id, status)
+      return response.status(200)
+    } catch {
+      return response.status(500).json({
+        error: 'Não foi possível atualizar o status do empréstimo informado.'
+      })
+    }
+  },
   async updateLateLoans() {
     // Pegar data atual
     const currentDate = new Date()
