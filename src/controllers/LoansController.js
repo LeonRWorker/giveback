@@ -41,9 +41,10 @@ module.exports = {
           error: 'Não foi possível registrar o empréstimo.'
         })
       }
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Erro de servidor interno.'
+        error: 'Erro de servidor interno.',
+        message: error.message
       })
     }
   },
@@ -155,9 +156,10 @@ module.exports = {
     try {
       await updateLoanDetails(id, loanedto, name, category, observations)
       return response.status(200)
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Não foi possível atualizar os detalhes do empréstimo informado.'
+        error: 'Não foi possível atualizar os detalhes do empréstimo informado.',
+        message: error.message
       })
     }
   },
@@ -208,9 +210,10 @@ module.exports = {
     try {
       await updateLoanStatus(id, status)
       return response.status(200)
-    } catch {
+    } catch (error) {
       return response.status(500).json({
-        error: 'Não foi possível atualizar o status do empréstimo informado.'
+        error: 'Não foi possível atualizar o status do empréstimo informado.',
+        message: error.message
       })
     }
   },
