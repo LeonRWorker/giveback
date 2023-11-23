@@ -30,7 +30,7 @@ module.exports = {
     // Tentar registrar o empréstimo ou retornar erro 
     try {
       // Registrar empréstimo
-      await registerLoan(id, borrowedby, loanedto, name, category, observations, finaldate, 'inday')
+      await registerLoan(id, borrowedby, loanedto, name, category, observations, Date.parse(finaldate), 'inday')
       // Verificar se o usuário foi cadastrado
       const itemLoan = await getLoanById(id)
       // Retornar usuário ou erro
