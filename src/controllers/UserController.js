@@ -182,27 +182,26 @@ module.exports = {
     // Alterar as novas informações
     const { name, password, email } = request.body
     // Verificar se a senha é vazia
-    if (password) {
-      const hashedPassword = bcrypt.hashSync(password, 10)
-      try {
-        await updateUser(id, name, email, hashedPassword)
-        return response.status(200)
-      } catch (error) {
-        return response.status(500).json({
-          message: 'Não foi possível atualizar o usuário informado.',
-          error: error.message
-        })
-      }
-    } else { 
+    if (!password) {
       try {
         await updateUserWithoutPassword(id, name, email)
-        return response.status(200)
+        return response.status(200).json({ message: 'Usuário alterado com sucesso!' })
       } catch (error) {
         return response.status(500).json({
           message: 'Não foi possível atualizar o usuário informado.',
           error: error.message
         })
       }
+    }
+    const hashedPassword = bcrypt.hashSync(password, 10)
+    try {
+      await updateUser(id, name, email, hashedPassword)
+      return response.status(200).json({ message: 'Usuário alterado com sucesso!' })
+    } catch (error) {
+      return response.status(500).json({
+        message: 'Não foi possível atualizar o usuário informado.',
+        error: error.message
+      })
     }
   },
   async delete (request, response) {
