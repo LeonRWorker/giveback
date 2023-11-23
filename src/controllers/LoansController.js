@@ -18,19 +18,19 @@ module.exports = {
       })
     }
     // Verificar se os campos foram preenchidos
-    const requiredFields = ['borrowedby','loanedto','name','category','observations','initialdate','finaldate','realfinaldate']
+    const requiredFields = ['borrowedby','loanedto','name','category','observations','finaldate']
     const missingFields = requiredFields.filter(field => !(field in request.body))
     if (missingFields.length > 0) {
       return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
     }
     // Dados do corpo da requisição
-    const { borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate } = request.body
+    const { borrowedby, loanedto, name, category, observations, finaldate } = request.body
     // Gerar id do empréstimo
     const id = crypto.randomBytes(4).toString('hex')
     // Tentar registrar o empréstimo ou retornar erro 
     try {
       // Registrar empréstimo
-      await registerLoan(id, borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate, 'inday')
+      await registerLoan(id, borrowedby, loanedto, name, category, observations, finaldate, 'inday')
       // Verificar se o usuário foi cadastrado
       const itemLoan = await getLoanById(id)
       // Retornar usuário ou erro
@@ -238,8 +238,8 @@ module.exports = {
 async function getUser (userId) {
   return (await connection`SELECT * FROM users WHERE id = ${userId}`).find(user => user.id === userId)
 }
-async function registerLoan (loanId, borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate, status) {
-  return (await connection`INSERT INTO loans (id, borrowedby, loanedto, name, category, observations, initialdate, finaldate, realfinaldate, status) VALUES (${loanId}, ${borrowedby}, ${loanedto}, ${name}, ${category}, ${observations}, ${initialdate}, ${finaldate}, ${realfinaldate}, ${status})`)
+async function registerLoan (loanId, borrowedby, loanedto, name, category, observations, finaldate, status) {
+  return (await connection`INSERT INTO loans (id, borrowedby, loanedto, name, category, observations, finaldate, status) VALUES (${loanId}, ${borrowedby}, ${loanedto}, ${name}, ${category}, ${observations}, ${finaldate}, ${status})`)
 }
 async function getLoanById (loanId) {
   return (await connection`SELECT * FROM loans WHERE id = ${loanId}`).find(loan => loan.id === loanId)
