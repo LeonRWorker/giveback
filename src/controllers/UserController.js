@@ -181,15 +181,28 @@ module.exports = {
     }
     // Alterar as novas informações
     const { name, password, email } = request.body
-    const hashedPassword = bcrypt.hashSync(password, 10)
-    try {
-      await updateUser(id, name, email, hashedPassword)
-      return response.status(200)
-    } catch (error) {
-      return response.status(500).json({
-        message: 'Não foi possível atualizar o usuário informado.',
-        error: error.message
-      })
+    // Verificar se a senha é vazia
+    if (password) {
+      const hashedPassword = bcrypt.hashSync(password, 10)
+      try {
+        await updateUser(id, name, email, hashedPassword)
+        return response.status(200)
+      } catch (error) {
+        return response.status(500).json({
+          message: 'Não foi possível atualizar o usuário informado.',
+          error: error.message
+        })
+      }
+    } else { 
+      try {
+        await updateUserWithoutPassword(id, name, email)
+        return response.status(200)
+      } catch (error) {
+        return response.status(500).json({
+          message: 'Não foi possível atualizar o usuário informado.',
+          error: error.message
+        })
+      }
     }
   },
   async delete (request, response) {
@@ -256,6 +269,9 @@ async function getUser (userId) {
 }
 async function updateUser (userId, name, email, hashedPassword) {
   return (await connection`UPDATE users SET name = ${name}, email = ${email}, password = ${hashedPassword} WHERE id = ${userId}`)
+}
+async function updateUserWithoutPassword (userId, name, email) {
+  return (await connection`UPDATE users SET name = ${name}, email = ${email} WHERE id = ${userId}`)
 }
 async function disableUser (userId, isactive) {
   return (await connection`UPDATE users SET isactive = ${isactive} WHERE id = ${userId}`)
