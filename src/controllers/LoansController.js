@@ -145,16 +145,16 @@ module.exports = {
       })
     }
     // Verificar se os campos foram preenchidos
-    const requiredFields = ['loanedto','name','category','observations']
+    const requiredFields = ['loanedto','name','category','observations', 'finaldate']
     const missingFields = requiredFields.filter(field => !(field in request.body))
     if (missingFields.length > 0) {
       return response.status(400).json({ error: `Os seguintes campos são obrigatórios: ${missingFields.join(', ')}` })
     }
     // Dados do corpo da requisição
-    const { loanedto, name, category, observations } = request.body
+    const { loanedto, name, category, observations, finaldate } = request.body
     // Alterar as informações ou retornar erro
     try {
-      await updateLoanDetails(id, loanedto, name, category, observations)
+      await updateLoanDetails(id, loanedto, name, category, observations, Date.parse(finaldate))
       return response.status(200)
     } catch (error) {
       return response.status(500).json({
@@ -250,8 +250,8 @@ async function getAllLoansByUserId (userId) {
 async function getAllLoans () {
   return (await connection`SELECT finaldate, status FROM loans`)
 }
-async function updateLoanDetails (loanId, loanedto, name, category, observations) {
-  return (await connection`UPDATE users SET name = ${name}, loanedto = ${loanedto}, category = ${category}, observations = ${observations} WHERE id = ${loanId}`)
+async function updateLoanDetails (loanId, loanedto, name, category, observations, finaldate) {
+  return (await connection`UPDATE users SET name = ${name}, loanedto = ${loanedto}, category = ${category}, observations = ${observations}, finaldate = ${finaldate} WHERE id = ${loanId}`)
 }
 async function updateLoanStatus (loanId, status) {
   return (await connection`UPDATE loans SET status = ${status} WHERE id = ${loanId}`)
