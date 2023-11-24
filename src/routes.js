@@ -27,6 +27,6 @@ routes.get('/loans', LoansController.index)
 routes.get('/loans/:id', LoansController.show)
 routes.put('/loans/:id', LoansController.update)
 routes.put('/loans/:id/status', LoansController.updateStatus)
-routes.delete('/loans/:id', LoansController.delete())
+routes.delete('/loans/:id', LoansController.delete)
 
 module.exports = routes
