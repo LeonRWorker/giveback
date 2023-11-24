@@ -234,6 +234,53 @@ module.exports = {
         await updateLoanStatus(loan.id, 'late')
       }
     }
+  },
+  async delete(request, response) {
+    // Verificar se tem sessão
+    const session_id = request.headers.session_id
+    if (!session_id) {
+      return response.status(401).json({
+        error: 'Operação não permitida! Você precisa estar autenticado para realizar essa operação.'
+      })
+    }
+    // Verificar se tem permissão
+    const userExist = await getUser(session_id)
+    if (!userExist) {
+      return response.status(401).json({
+        error: 'Operação não permitida! Você precisa precisa ser um usuário para remover o empréstimo informado.'
+      })
+    }
+    // Verificar se tem o id do empréstimo que deseja realizar a operação
+    const { id } = request.params
+    if (!id) {
+      return response.status(400).json({
+        error: 'Você não especificou o empréstimo que deseja remover.'
+      })
+    }
+    // Verificar se o empréstimo informado existe
+    const loanExist = await getLoanById(id)
+    if (!loanExist) {
+      return response.status(404).json({
+        error: 'O empréstimo informado não existe.'
+      })
+    }
+    // Verificar se o usuário que realizou o impréstimo é o mesmo logado
+    if (loanExist.borrowedby !== session_id) {
+      return response.status(401).json({
+        error: 'Você não está autorizado a remover empréstimos de outros usuários.'
+      })
+    }    // Alterar as informações ou retornar erro
+    try {
+      await deleteLoan(id,)
+      return response.status(202).json({
+        message: 'Empréstimo removido com sucesso!'
+      })
+    } catch (error) {
+      return response.status(500).json({
+        error: 'Não foi possível atualizar o status do empréstimo informado.',
+        message: error.message
+      })
+    }
   }
 }
 
@@ -257,4 +304,7 @@ async function updateLoanDetails (loanId, loanedto, name, category, observations
 }
 async function updateLoanStatus (loanId, status) {
   return (await connection`UPDATE loans SET status = ${status} WHERE id = ${loanId}`)
+}
+async function deleteLoan(loanId) {
+  return (await connection`DELETE FROM loans WHERE id = ${loanId}`)
 }
