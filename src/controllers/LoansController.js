@@ -253,7 +253,7 @@ async function getAllLoans () {
   return (await connection`SELECT finaldate, status FROM loans`)
 }
 async function updateLoanDetails (loanId, loanedto, name, category, observations, finaldate) {
-  return (await connection`UPDATE users SET name = ${name}, loanedto = ${loanedto}, category = ${category}, observations = ${observations}, finaldate = ${finaldate} WHERE id = ${loanId}`)
+  return (await connection`UPDATE loans SET name = ${name}, loanedto = ${loanedto}, category = ${category}, observations = ${observations}, finaldate = ${finaldate} WHERE id = ${loanId}`)
 }
 async function updateLoanStatus (loanId, status) {
   return (await connection`UPDATE loans SET status = ${status} WHERE id = ${loanId}`)
