@@ -214,7 +214,7 @@ module.exports = {
       try {
         await finishedLoanStatus(id, status)
         return response.status(200).json({
-          message: 'Empréstimmo finalziado com sucesso!'
+          message: 'Empréstimmo finalizado com sucesso!'
         })
       } catch (error) {
         return response.status(500).json({
