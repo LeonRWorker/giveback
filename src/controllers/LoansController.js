@@ -208,17 +208,33 @@ module.exports = {
     }
     // Dados do corpo da requisição
     const { status } = request.body
-    // Alterar as informações ou retornar erro
-    try {
-      await updateLoanStatus(id, status)
-      return response.status(200).json({
-        message: 'Status do empréstimo atualizado com sucesso!'
-      })
-    } catch (error) {
-      return response.status(500).json({
-        error: 'Não foi possível atualizar o status do empréstimo informado.',
-        message: error.message
-      })
+    // Verificar o status
+    if (status === 'returned') {
+      // Alterar as informações ou retornar erro
+      try {
+        await finishedLoanStatus(id, status)
+        return response.status(200).json({
+          message: 'Empréstimmo finalziado com sucesso!'
+        })
+      } catch (error) {
+        return response.status(500).json({
+          error: 'Não foi possível atualizar o status do empréstimo informado.',
+          message: error.message
+        })
+      }
+    } else {
+      // Alterar as informações ou retornar erro
+      try {
+        await updateLoanStatus(id, status)
+        return response.status(200).json({
+          message: 'Status do empréstimo atualizado com sucesso!'
+        })
+      } catch (error) {
+        return response.status(500).json({
+          error: 'Não foi possível atualizar o status do empréstimo informado.',
+          message: error.message
+        })
+      }
     }
   },
   async updateLateLoans() {
@@ -284,26 +300,29 @@ module.exports = {
   }
 }
 
-async function getUser (userId) {
+async function getUser(userId) {
   return (await connection`SELECT * FROM users WHERE id = ${userId}`).find(user => user.id === userId)
 }
-async function registerLoan (loanId, borrowedby, loanedto, name, category, observations, finaldate, status) {
+async function registerLoan(loanId, borrowedby, loanedto, name, category, observations, finaldate, status) {
   return (await connection`INSERT INTO loans (id, borrowedby, loanedto, name, category, observations, finaldate, status) VALUES (${loanId}, ${borrowedby}, ${loanedto}, ${name}, ${category}, ${observations}, ${finaldate}, ${status})`)
 }
-async function getLoanById (loanId) {
+async function getLoanById(loanId) {
   return (await connection`SELECT * FROM loans WHERE id = ${loanId}`).find(loan => loan.id === loanId)
 }
-async function getAllLoansByUserId (userId) {
+async function getAllLoansByUserId(userId) {
   return (await connection`SELECT * FROM loans WHERE borrowedby = ${userId}`)
 }
-async function getAllLoans () {
+async function getAllLoans() {
   return (await connection`SELECT finaldate, status FROM loans`)
 }
-async function updateLoanDetails (loanId, loanedto, name, category, observations, finaldate) {
+async function updateLoanDetails(loanId, loanedto, name, category, observations, finaldate) {
   return (await connection`UPDATE loans SET name = ${name}, loanedto = ${loanedto}, category = ${category}, observations = ${observations}, finaldate = ${finaldate} WHERE id = ${loanId}`)
 }
-async function updateLoanStatus (loanId, status) {
+async function updateLoanStatus(loanId, status) {
   return (await connection`UPDATE loans SET status = ${status} WHERE id = ${loanId}`)
+}
+async function finishedLoanStatus(loanId, status) {
+  return (await connection`UPDATE loans SET status = ${status}, realfinaldate = ${new Date()} WHERE id = ${loanId}`)
 }
 async function deleteLoan(loanId) {
   return (await connection`DELETE FROM loans WHERE id = ${loanId}`)
